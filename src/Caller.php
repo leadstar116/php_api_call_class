@@ -11,7 +11,7 @@ class Caller
   public $rawResponseHeaders = '';
   public $responseHeaders = null;
   public $response = null;
-  public $data = [];
+  public $dataArray = [];
 
   public $curlError = false;
   public $curlErrorCode = 0;
@@ -81,6 +81,68 @@ class Caller
   }
 
   /**
+   * root
+   *
+   * @access public
+   * @param  $url
+   * @param  $request_method
+   * @param  $data
+   */
+  public function root()
+  {
+    $this->dataArray = json_decode($this->response);
+  }
+
+  /**
+   * where
+   *
+   * @access public
+   * @param  $key
+   * @param  $operator
+   * @param  $value
+   */
+  public function where($key, $operator, $value)
+  {
+    $filtered = [];
+
+    foreach ($this->dataArray as $data) {
+      switch ($operator) {
+        case '=':
+          if($data->$key == $value) {
+            array_push($filtered, $data);
+          }
+          break;
+        case '!=':
+          if($data->$key != $value) {
+            array_push($filtered, $data);
+          }
+          break;
+        case '>=':
+          if($data->$key >= $value) {
+            array_push($filtered, $data);
+          }
+          break;
+        case '<=':
+          if($data->$key <= $value) {
+            array_push($filtered, $data);
+          }
+          break;
+        case '>':
+          if($data->$key > $value) {
+            array_push($filtered, $data);
+          }
+          break;
+        case '<':
+          if($data->$key < $value) {
+            array_push($filtered, $data);
+          }
+          break;
+      }
+    }
+    print_r($filtered);
+  }
+
+  /**
    * Initialize
    *
    * @access private
@@ -93,6 +155,10 @@ class Caller
     $this->request_method = $request_method;
     $this->setOpt(CURLINFO_HEADER_OUT, true);
     $this->setOpt(CURLOPT_RETURNTRANSFER, true);
+    $this->setOpt(CURLOPT_HTTPHEADER, array(
+      'Content-Type: application/json',
+      'User-Agent: leadstar116' // Github requires User-Agent header. More details at http://developer.github.com/v3/#user-agent-required
+    ));
     $this->setUrl($base_url);
 
     switch ($this->request_method) {
