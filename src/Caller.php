@@ -7,6 +7,8 @@ class Caller
   public $curl;
   public $url = null;
   public $request_method = 'get';
+  public $sort_by = null;
+  public $sort = 'DESC';
   public $rawResponse = null;
   public $rawResponseHeaders = '';
   public $responseHeaders = null;
@@ -51,6 +53,7 @@ class Caller
     if ($success) {
       $this->options[$option] = $value;
     }
+
     return $success;
   }
 
@@ -67,7 +70,7 @@ class Caller
   }
 
   /**
-   * make
+   * Make
    *
    * @access public
    * @param  $url
@@ -81,7 +84,7 @@ class Caller
   }
 
   /**
-   * root
+   * Root
    *
    * @access public
    * @param  $url
@@ -90,11 +93,11 @@ class Caller
    */
   public function root()
   {
-    $this->dataArray = json_decode($this->response);
+    $this->dataArray = json_decode($this->response, true);
   }
 
   /**
-   * where
+   * Where
    *
    * @access public
    * @param  $key
@@ -108,38 +111,108 @@ class Caller
     foreach ($this->dataArray as $data) {
       switch ($operator) {
         case '=':
-          if($data->$key == $value) {
+          if($data[$key] == $value) {
             array_push($filtered, $data);
           }
           break;
         case '!=':
-          if($data->$key != $value) {
+          if($data[$key] != $value) {
             array_push($filtered, $data);
           }
           break;
         case '>=':
-          if($data->$key >= $value) {
+          if($data[$key] >= $value) {
             array_push($filtered, $data);
           }
           break;
         case '<=':
-          if($data->$key <= $value) {
+          if($data[$key] <= $value) {
             array_push($filtered, $data);
           }
           break;
         case '>':
-          if($data->$key > $value) {
+          if($data[$key] > $value) {
             array_push($filtered, $data);
           }
           break;
         case '<':
-          if($data->$key < $value) {
+          if($data[$key] < $value) {
             array_push($filtered, $data);
           }
           break;
       }
     }
-    print_r($filtered);
+    $this->dataArray = $filtered;
+  }
+
+  /**
+   * Sort
+   *
+   * @access public
+   * @param  $sort_by
+   * @param  $sort
+   */
+  public function sort($sort_by, $sort)
+  {
+    $this->sort_by = $sort_by;
+    $this->sort = $sort;
+    usort($this->dataArray, array($this, "compare"));
+  }
+
+  /**
+   * Get
+   *
+   * @access public
+   */
+  public function get()
+  {
+    return $this->dataArray;
+  }
+
+  /**
+   * Only
+   *
+   * @access public
+   * @param  $keys
+   */
+  public function only($keys)
+  {
+    $result = [];
+    foreach ($this->dataArray as $data) {
+      $element = [];
+      foreach ($keys as $key) {
+        if(isset($data[$key])) {
+          $element[$key] = $data[$key];
+        }
+      }
+      array_push($result, $element);
+    }
+
+    return $result;
+  }
+
+  /**
+   * Compare
+   *
+   * @access private
+   * @param  $left
+   * @param  $right
+   */
+  private function compare($left, $right)
+  {
+    $type = gettype($left[$this->sort_by]);
+    if ($type == 'integer') {
+      $a = $left[$this->sort_by];
+      $b = $right[$this->sort_by];
+      if ($this->sort == 'ASC') return $a >= $b;
+      return $a <= $b;
+    }
+
+    $a = strtolower($left[$this->sort_by]);
+    $b = strtolower($right[$this->sort_by]);
+    if ($this->sort == 'ASC') return strcmp($a, $b);
+
+    return strcmp($b, $a);
   }
 
   /**
@@ -251,6 +324,7 @@ class Caller
     foreach ($headers as $key => $value) {
       $response_headers[$key] = $value;
     }
+
     return $response_headers;
   }
 
