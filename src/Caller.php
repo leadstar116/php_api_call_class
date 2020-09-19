@@ -2,7 +2,16 @@
 
 namespace App;
 
-class Caller
+interface CallRequest
+{
+  public function make($url, $request_method, $data = false);
+  public function root();
+  public function get();
+  public function where($key, $operator, $value);
+  public function sort($sort_by, $sort);
+  public function only($keys);
+}
+class Caller implements CallRequest
 {
   public $curl;
   public $url = null;
@@ -111,32 +120,32 @@ class Caller
     foreach ($this->dataArray as $data) {
       switch ($operator) {
         case '=':
-          if($data[$key] == $value) {
+          if ($data[$key] == $value) {
             array_push($filtered, $data);
           }
           break;
         case '!=':
-          if($data[$key] != $value) {
+          if ($data[$key] != $value) {
             array_push($filtered, $data);
           }
           break;
         case '>=':
-          if($data[$key] >= $value) {
+          if ($data[$key] >= $value) {
             array_push($filtered, $data);
           }
           break;
         case '<=':
-          if($data[$key] <= $value) {
+          if ($data[$key] <= $value) {
             array_push($filtered, $data);
           }
           break;
         case '>':
-          if($data[$key] > $value) {
+          if ($data[$key] > $value) {
             array_push($filtered, $data);
           }
           break;
         case '<':
-          if($data[$key] < $value) {
+          if ($data[$key] < $value) {
             array_push($filtered, $data);
           }
           break;
@@ -181,7 +190,7 @@ class Caller
     foreach ($this->dataArray as $data) {
       $element = [];
       foreach ($keys as $key) {
-        if(isset($data[$key])) {
+        if (isset($data[$key])) {
           $element[$key] = $data[$key];
         }
       }
