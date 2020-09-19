@@ -2,17 +2,9 @@
 
 1. Clone this **branch**
 2. Run `$ composer install`
-3. Everything you need is in the **src** directory
-
-#### How to show us your results:
-1. Push your results to your private repo
-2. Give access to maurice@proxify.io and nadya@proxify.io
-
-#### What you should show us:
-1. Clean and readable code
-2. Good knowledge in design patterns
-3. Reusable code fragments
-4. Knowledge in unit testing
+3. **src** directory contains the Caller class and test.
+4. To see the result, please run index.php
+  - Remark: Please call root() method before calling where(), sort(), get(), and only() methods.
 
 #### The main task in this assignment:
 Create a function, that makes an external call to an api and chain it with helper functions
@@ -29,7 +21,7 @@ Create a function, that makes an external call to an api and chain it with helpe
      ```
 3. Find the root of the items (You can exclude this function, if the items are already at the root position):
     ```php
-      $caller->root('data.users');
+      $caller->root();
       ```
 4. Filter elements by their value [boolean, integer and string] (This function can be excluded or used several times):
     ```php
