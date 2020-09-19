@@ -3,8 +3,8 @@
 1. Clone this **branch**
 2. Run `$ composer install`
 3. **src** directory contains the Caller class and test.
-4. To see the result, please run index.php
-  - Remark: Please call root() method before calling where(), sort(), get(), and only() methods.
+4. To see the result, please run index.php <br/>
+<b> Remark: Please call root() method before calling where(), sort(), get(), and only() methods. <b>
 
 #### The main task in this assignment:
 Create a function, that makes an external call to an api and chain it with helper functions
